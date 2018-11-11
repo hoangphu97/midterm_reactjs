@@ -8,6 +8,8 @@ import firebase from "firebase";
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth"
 import uiConfig from "../config/uiConfig"
 import Chat from "../views/Chat"
+import Logout from "../Logout/logout"
+
 class Login extends React.Component {
     
     
@@ -49,6 +51,7 @@ class Login extends React.Component {
     //     )
     return (
         <div>
+          <Logout/>
         </div>
       // <div>{todosList}</div>
     )
@@ -65,6 +68,7 @@ export default compose(
     // profile: state.firebase.profile // load profile
   }))
 )(Login)
+
 //export default withFirebase(AddData)
 // or firebaseConnect()(Todos)
 // export default Todos;

@@ -6,6 +6,27 @@ import { withFirebase, firebaseConnect, isLoaded, isEmpty } from 'react-redux-fi
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 class Chat extends Component {
+  constructor() {
+    super();
+    this.state = {
+      input: "",
+      username: "",
+      photoUrl: "",
+    }
+  }
+
+  showUser = (user) => {
+    this.setState({
+      username: user.name,
+      photoUrl: user.photoUrl
+    })
+  }
+
+  search = (e) => {
+    let username = e.target.value;
+    this.setState({ input: username })
+  }
+
   render() {
     const style1 = {
       color: "#AED2A6"
@@ -14,38 +35,32 @@ class Chat extends Component {
       color: "#DAE9DA"
     }
 
-    let listConnect = []
-
-    const todosList = !isLoaded(this.props.listUser)
+    const listConnect = !isLoaded(this.props.listUser)
       ? 'Loading'
       : isEmpty(this.props.listUser)
         ? 'Todo list is empty'
         : Object.keys(this.props.listUser).map(
           (key, id) => (
-            <div>{this.props.listUser[key].name}</div>
+            String(this.props.listUser[key].name).toLowerCase().includes(String(this.state.input).toLowerCase()) ?
+              <li key={key} class="clearfix" style={{ cursor: "pointer" }} onClick={() => this.showUser(this.props.listUser[key])}>
+                <img src={this.props.listUser[key].photoUrl} alt="avatar" style={{ width: "40px" }} />
+                <div class="about">
+                  <div class="name">{this.props.listUser[key].name}</div>
+                  <div class="status">
+                    <i class="fa fa-circle online">{this.props.listUser[key].status}</i>
+                  </div>
+                </div>
+              </li> : null
           )
         )
 
-    for (var user in this.props.listUser) {
-      listConnect.push(
-        <li class="clearfix">
-          <img src={this.props.listUser[user].photoUrl} alt="avatar" style={{ width: "40px" }}/>
-          <div class="about">
-            <div class="name">{this.props.listUser[user].name}</div>
-            <div class="status">
-              <i class="fa fa-circle online"></i> online
-                </div>
-          </div>
-        </li>
-      )
-    }
     return (
-      // <div>{todosList}</div>,
+
       <div class="container clearfix">
         {
-          <div class="people-list" id="people-list">
+          <div class="people-list" id="people-list" >
             <div class="search">
-              <input type="text" placeholder="search" />
+              <input type="text" id="search" name="search" placeholder="search" value={this.props.search} onChange={(e) => { this.search(e) }} />
               <i class="fa fa-search"></i>
             </div>
             <ul class="list">
@@ -53,121 +68,12 @@ class Chat extends Component {
             </ul>
           </div>
         }
-
-        {/* <div class="people-list" id="people-list">
-          <div class="search">
-            <input type="text" placeholder="search" />
-            <i class="fa fa-search"></i>
-          </div>
-          <ul class="list">
-            <li class="clearfix">
-              <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_01.jpg" alt="avatar" />
-              <div class="about">
-                <div class="name">Vincent Porter</div>
-                <div class="status">
-                  <i class="fa fa-circle online"></i> online
-                </div>
-              </div>
-            </li>
-
-            <li class="clearfix">
-              <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_02.jpg" alt="avatar" />
-              <div class="about">
-                <div class="name">Aiden Chavez</div>
-                <div class="status">
-                  <i class="fa fa-circle offline"></i> left 7 mins ago
-        </div>
-              </div>
-            </li>
-
-            <li class="clearfix">
-              <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_03.jpg" alt="avatar" />
-              <div class="about">
-                <div class="name">Mike Thomas</div>
-                <div class="status">
-                  <i class="fa fa-circle online"></i> online
-        </div>
-              </div>
-            </li>
-
-            <li class="clearfix">
-              <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_04.jpg" alt="avatar" />
-              <div class="about">
-                <div class="name">Erica Hughes</div>
-                <div class="status">
-                  <i class="fa fa-circle online"></i> online
-        </div>
-              </div>
-            </li>
-
-            <li class="clearfix">
-              <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_05.jpg" alt="avatar" />
-              <div class="about">
-                <div class="name">Ginger Johnston</div>
-                <div class="status">
-                  <i class="fa fa-circle online"></i> online
-        </div>
-              </div>
-            </li>
-
-            <li class="clearfix">
-              <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_06.jpg" alt="avatar" />
-              <div class="about">
-                <div class="name">Tracy Carpenter</div>
-                <div class="status">
-                  <i class="fa fa-circle offline"></i> left 30 mins ago
-        </div>
-              </div>
-            </li>
-
-            <li class="clearfix">
-              <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_07.jpg" alt="avatar" />
-              <div class="about">
-                <div class="name">Christian Kelly</div>
-                <div class="status">
-                  <i class="fa fa-circle offline"></i> left 10 hours ago
-        </div>
-              </div>
-            </li>
-
-            <li class="clearfix">
-              <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_08.jpg" alt="avatar" />
-              <div class="about">
-                <div class="name">Monica Ward</div>
-                <div class="status">
-                  <i class="fa fa-circle online"></i> online
-        </div>
-              </div>
-            </li>
-
-            <li class="clearfix">
-              <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_09.jpg" alt="avatar" />
-              <div class="about">
-                <div class="name">Dean Henry</div>
-                <div class="status">
-                  <i class="fa fa-circle offline"></i> offline since Oct 28
-        </div>
-              </div>
-            </li>
-
-            <li class="clearfix">
-              <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_10.jpg" alt="avatar" />
-              <div class="about">
-                <div class="name">Peyton Mckinney</div>
-                <div class="status">
-                  <i class="fa fa-circle online"></i> online
-        </div>
-              </div>
-            </li>
-          </ul>
-        </div> */}
-
         <div class="chat">
           <div class="chat-header clearfix">
-            <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_01_green.jpg" alt="avatar" />
+            <img src={this.state.photoUrl} alt="avatar" style={{ width: "40px" }}  />
 
             <div class="chat-about">
-              <div class="chat-with">Chat with Vincent Porter</div>
+              <div class="chat-with">Chat with {this.state.username}</div>
               <div class="chat-num-messages">already 1 902 messages</div>
             </div>
             <i class="fa fa-star"></i>
@@ -277,9 +183,7 @@ class Chat extends Component {
 </li>
 </script> */
 export default compose(
-  firebaseConnect([
-    'listUser' // { path: '/todos' } // object notation
-  ]),
+  firebaseConnect(),
   connect((state) => ({
     listUser: state.firebase.data.listUser,
     // profile: state.firebase.profile // load profile

@@ -10,15 +10,17 @@ import {Provider} from 'react-redux'
 import {createStore , combineReducers, compose} from 'redux'
 import {reactReduxFirebase, firebaseReducer} from 'react-redux-firebase'
 import Login from "./Login/login"
+import Logout from "./Logout/logout";
 
 firebase.initializeApp(firebaseConfig);
 
 class App extends Component {
   state = { isSignedIn: false }
+
   componentDidMount = () => {
     firebase.auth().onAuthStateChanged(user => {
       this.setState({ 
-        isSignedIn: !!user,
+        isSignedIn: user,
         
        })
     })
@@ -34,10 +36,10 @@ class App extends Component {
           <span>
             <div>Sign In!</div>
             {/* <h1>Hello {firebase.auth().currentUser.displayName}</h1> */}
+            <Logout/>
+            {/* <Logout/> */}
+            {/* <Chat/> */}
             
-            <button onClick={() => firebase.auth().signOut()}>Sign out!</button>
-            <Chat/>
-            <Login/>
           </span>
         ) : (
           <StyledFirebaseAuth
