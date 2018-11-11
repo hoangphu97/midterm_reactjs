@@ -2,29 +2,29 @@ import React, { Component } from "react"
 import "./App.css"
 import firebase from "firebase"
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth"
+import firebaseConfig from "./config/config"
+import uiConfig from "./config/uiConfig"
+import Chat from "./views/Chat"
+import {render} from 'react-dom'
+import {Provider} from 'react-redux'
+import {createStore , combineReducers, compose} from 'redux'
+import {reactReduxFirebase, firebaseReducer} from 'react-redux-firebase'
+import Login from "./Login/login"
 
-firebase.initializeApp({ apiKey: "AIzaSyBgIiJNvYjmqBaDEO7ARoqn4bySMp6FLMA",
-authDomain: "giua-ky.firebaseapp.com"});
-
-
+firebase.initializeApp(firebaseConfig);
 
 class App extends Component {
   state = { isSignedIn: false }
-  uiConfig = {
-    signInFlow: "popup",
-    signInOptions: [
-      firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-    ],
-    callbacks: {
-      signInSuccess: () => false
-    }
-  }
-
   componentDidMount = () => {
     firebase.auth().onAuthStateChanged(user => {
-      this.setState({ isSignedIn: !!user })
-      console.log("user", user)
+      this.setState({ 
+        isSignedIn: !!user,
+        
+       })
     })
+    
+  // var rootRef = firebase.database().ref('.info/connected');
+    // console.log(rootRef);
   }
 
   render() {
@@ -33,13 +33,15 @@ class App extends Component {
         {this.state.isSignedIn ? (
           <span>
             <div>Sign In!</div>
+            {/* <h1>Hello {firebase.auth().currentUser.displayName}</h1> */}
+            
             <button onClick={() => firebase.auth().signOut()}>Sign out!</button>
-            <h1>Hello {firebase.auth().currentUser.displayName}</h1>
-            <img alt="profile picture" src={firebase.auth().currentUser.photoURL} />
+            <Chat/>
+            <Login/>
           </span>
         ) : (
           <StyledFirebaseAuth
-            uiConfig={this.uiConfig}
+            uiConfig={uiConfig}
             firebaseAuth={firebase.auth()}
           />
         )}
