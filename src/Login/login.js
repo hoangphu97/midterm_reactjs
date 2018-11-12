@@ -8,7 +8,6 @@ import firebase from "firebase";
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth"
 import uiConfig from "../config/uiConfig"
 import Chat from "../views/Chat"
-import Logout from "../Logout/logout"
 
 class Login extends React.Component {
     
@@ -16,45 +15,65 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
     this.pushSample = this.pushSample.bind(this);
+    this.pushMessage = this.pushMessage.bind(this);
+    this.logout = this.logout.bind(this);
+    this.state = {
+      user : firebase.auth().currentUser,
+    }
     }
     
 
   pushSample() {
-    var user = firebase.auth().currentUser;
-    var name, email, photoUrl, uid, emailVerified,status;
+    // var user = firebase.auth().currentUser;
+    var name, email, photoUrl,status;
 
-    if (user != null) {
-      name = user.displayName;
-      email = user.email;
-      photoUrl = user.photoURL;
-      emailVerified = user.emailVerified;
-      uid = user.uid;  // The user's ID, unique to the Firebase project. Do NOT use
-      // this value to authenticate with your backend server, if
-      // you have one. Use User.getToken() instead.
+    if (this.state.user != null) {
+      name = this.state.user.displayName;
+      email = this.state.user.email;
+      photoUrl = this.state.user.photoURL;
       status = "online";
     }
     const userInfo = { name: name, email: email, photoUrl: photoUrl , status: status }
     this.props.firebase.set(`listUser/${email.split("@gmail.com")[0]}`, userInfo)
   }
 
+  pushMessage() {
+    console.log("ABC")
+    var user = firebase.auth().currentUser;
+    var name , message;
+
+    if (user != null) {
+      name = user.displayName;
+      message = "ABCXYZ";
+    }
+    const listmessage = { name: name , message : message}
+    this.props.firebase.set(`listMessage/`, listmessage)
+  }
+
+  logout(){
+    let status , email;
+
+    if (this.state.user != null) {
+        status = "offline"; 
+        email = this.state.user.email;
+      }
+      const userInfo = {status: status }
+      this.props.firebase.update(`listUser/${email.split("@gmail.com")[0]}`, userInfo)
+        firebase.database().goOffline();
+        firebase.auth().signOut()
+} 
+
   render() {
     this.pushSample();
-    // console.log(this.props.listUser)
-    // const todosList = !isLoaded(this.props.listUser)
-    //   ? 'Loading'
-    //   : isEmpty(this.props.listUser)
-    //     ? 'Todo list is empty'
-    //     : Object.keys(this.props.listUser).map(
-    //       (key, id) => (
-    //         <div>{this.props.listUser[key].name}</div>
-    //       )
-    //     )
+    //this.pushMessage();
     return (
-        <div>
-          <Logout/>
-        </div>
+      <div>
+        <button onClick={this.logout}>Sign out!</button>
+        <Chat/>
+     </div>)
+
       // <div>{todosList}</div>
-    )
+    
   }
 
 }
@@ -65,6 +84,7 @@ export default compose(
   ]),
   connect((state) => ({
     listUser: state.firebase.data.listUser,
+    //listMessage : state.firebase.data.listMessage,
     // profile: state.firebase.profile // load profile
   }))
 )(Login)

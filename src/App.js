@@ -36,7 +36,7 @@ class App extends Component {
           <span>
             <div>Sign In!</div>
             {/* <h1>Hello {firebase.auth().currentUser.displayName}</h1> */}
-            <Logout/>
+            <Login/>
             {/* <Logout/> */}
             {/* <Chat/> */}
             

@@ -9,9 +9,11 @@ class Chat extends Component {
   constructor() {
     super();
     this.state = {
+      currentUser : firebase.auth().currentUser,
       input: "",
       username: "",
       photoUrl: "",
+      messageSingle : "",
     }
   }
 
@@ -27,6 +29,25 @@ class Chat extends Component {
     this.setState({ input: username })
   }
 
+  chat = () => {
+    if(this.state.messageSingle && this.state.messageSingle.length > 0){
+      let message,name;
+
+    if (this.state.currentUser != null) {
+        name = this.state.currentUser.displayName;
+        message = this.state.messageSingle;
+    }
+     const messageUser = { message : message, name: name}
+    this.props.firebase.push(`listMessage/${this.state.currentUser.displayName}&${this.state.username}`, messageUser) 
+    var key = this.state.currentUser.displayName + "&" + this.state.username;
+    console.log(key);
+    console.log(this.props.listMessage[key]);
+
+      document.getElementById("message-to-send").value = ""; 
+    }
+    
+  }
+
   render() {
     const style1 = {
       color: "#AED2A6"
@@ -35,6 +56,46 @@ class Chat extends Component {
       color: "#DAE9DA"
     }
 
+    
+    
+    // Object.keys(this.props.listMessage).map(
+    //   (key, id) => (
+    // console.log(this.props.listMessage[key])
+    // ))
+    // const listMessage = !isLoaded(this.props.listMessage)
+    //   ? 'Loading'
+    //   : isEmpty(this.props.listMessage)
+    //     ? 'List Message is empty'
+    //     : Object.keys(this.props.listMessage).map(
+    //       (key,id) => (
+            
+    //         <div class="chat-history">
+    //         <ul>
+    //           <li class="clearfix">
+    //             <div class="message-data align-right">
+    //       <span class="message-data-name" >Olia</span> <i class="fa fa-circle me"></i>
+
+    //             </div>
+    //             <div class="message other-message float-right">
+    //               Hi Vincent, how are you? How is the project coming along?
+    //             </div>
+    //           </li>
+
+    //           <li>
+    //             <div class="message-data">
+    //               <span class="message-data-name"><i class="fa fa-circle online"></i> Vincent</span>
+    //               <span class="message-data-time">10:12 AM, Today</span>
+    //             </div>
+    //             <div class="message my-message">
+    //               Are we meeting today? Project has been already finished and I have results to show you.
+    //     </div>
+    //           </li>
+    //         </ul>
+
+    //       </div>
+    //       )
+    //     )
+    
     const listConnect = !isLoaded(this.props.listUser)
       ? 'Loading'
       : isEmpty(this.props.listUser)
@@ -74,12 +135,12 @@ class Chat extends Component {
 
             <div class="chat-about">
               <div class="chat-with">Chat with {this.state.username}</div>
-              <div class="chat-num-messages">already 1 902 messages</div>
             </div>
-            <i class="fa fa-star"></i>
+            
           </div>
 
           {/* <!-- end chat-header --> */}
+          
 
           <div class="chat-history">
             <ul>
@@ -103,50 +164,18 @@ class Chat extends Component {
                   Are we meeting today? Project has been already finished and I have results to show you.
         </div>
               </li>
-
-              <li class="clearfix">
-                <div class="message-data align-right">
-                  <span class="message-data-time" >10:14 AM, Today</span> &nbsp; &nbsp;
-          <span class="message-data-name" >Olia</span> <i class="fa fa-circle me"></i>
-
-                </div>
-                <div class="message other-message float-right">
-                  Well I am not sure. The rest of the team is not here yet. Maybe in an hour or so? Have you faced any problems at the last phase of the project?
-        </div>
-              </li>
-
-              <li>
-                <div class="message-data">
-                  <span class="message-data-name"><i class="fa fa-circle online"></i> Vincent</span>
-                  <span class="message-data-time">10:20 AM, Today</span>
-                </div>
-                <div class="message my-message">
-                  Actually everything was fine. I'm very excited to show this to our team.
-        </div>
-              </li>
-
-              <li>
-                <div class="message-data">
-                  <span class="message-data-name"><i class="fa fa-circle online"></i> Vincent</span>
-                  <span class="message-data-time">10:31 AM, Today</span>
-                </div>
-                <i class="fa fa-circle online"></i>
-                <i class="fa fa-circle online" style={style1}></i>
-                <i class="fa fa-circle online" style={style2}></i>
-              </li>
-
             </ul>
 
           </div>
           {/* <!-- end chat-history --> */}
 
           <div class="chat-message clearfix">
-            <textarea name="message-to-send" id="message-to-send" placeholder="Type your message" rows="3"></textarea>
+            <textarea name="message-to-send" id="message-to-send" onChange= {(e) =>  this.setState({messageSingle : e.target.value})} placeholder="Type your message" rows="3"></textarea>
 
             <i class="fa fa-file-o"></i> &nbsp;&nbsp;&nbsp;
     <i class="fa fa-file-image-o"></i>
 
-            <button>Send</button>
+            <button onClick = {() => this.chat()}>Send</button>
 
           </div>
           {/* <!-- end chat-message --> */}
@@ -159,33 +188,11 @@ class Chat extends Component {
     )
   }
 }
-/* <script id="message-template" type="text/x-handlebars-template">
-<li class="clearfix">
-<div class="message-data align-right">
-  <span class="message-data-time" >{{time}}, Today</span> &nbsp; &nbsp;
-  <span class="message-data-name" >Olia</span> <i class="fa fa-circle me"></i>
-</div>
-<div class="message other-message float-right">
-  {{messageOutput}}
-</div>
-</li>
-</script>
 
-<script id="message-response-template" type="text/x-handlebars-template">
-<li>
-<div class="message-data">
-  <span class="message-data-name"><i class="fa fa-circle online"></i> Vincent</span>
-  <span class="message-data-time">{{time}}, Today</span>
-</div>
-<div class="message my-message">
-  {{response}}
-</div>
-</li>
-</script> */
 export default compose(
-  firebaseConnect(),
+  firebaseConnect(['listMessage']),
   connect((state) => ({
     listUser: state.firebase.data.listUser,
-    // profile: state.firebase.profile // load profile
+    listMessage : state.firebase.data.listMessage,
   }))
 )(Chat)

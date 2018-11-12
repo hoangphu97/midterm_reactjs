@@ -10,26 +10,7 @@ class Logout extends React.Component{
         super(props);
         this.logout = this.logout.bind(this);
     }
-    logout(){
-        var user = firebase.auth().currentUser;
-        var name, email, photoUrl, uid, emailVerified,status;
-
-        if (user != null) {
-            name = user.displayName;
-            email = user.email;
-            photoUrl = user.photoURL;
-            emailVerified = user.emailVerified;
-            uid = user.uid;  // The user's ID, unique to the Firebase project. Do NOT use
-            // this value to authenticate with your backend server, if
-            // you have one. Use User.getToken() instead.
-            status = "offline"; 
-          }
-          console.log(user.status)
-          const userInfo = { name: name, email: email, photoUrl: photoUrl , status: status }
-            this.props.firebase.update(`listUser/${email.split("@gmail.com")[0]}`, userInfo)
-            firebase.database().goOffline();
-            firebase.auth().signOut()
-    }
+    
     render(){
         var user = firebase.auth().currentUser;
     var name, email, photoUrl, uid, emailVerified,status;
