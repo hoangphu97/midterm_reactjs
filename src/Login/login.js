@@ -15,7 +15,6 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
     this.pushSample = this.pushSample.bind(this);
-    this.pushMessage = this.pushMessage.bind(this);
     this.logout = this.logout.bind(this);
     this.state = {
       user : firebase.auth().currentUser,
@@ -24,7 +23,6 @@ class Login extends React.Component {
     
 
   pushSample() {
-    // var user = firebase.auth().currentUser;
     var name, email, photoUrl,status;
 
     if (this.state.user != null) {
@@ -35,19 +33,6 @@ class Login extends React.Component {
     }
     const userInfo = { name: name, email: email, photoUrl: photoUrl , status: status }
     this.props.firebase.set(`listUser/${email.split("@gmail.com")[0]}`, userInfo)
-  }
-
-  pushMessage() {
-    console.log("ABC")
-    var user = firebase.auth().currentUser;
-    var name , message;
-
-    if (user != null) {
-      name = user.displayName;
-      message = "ABCXYZ";
-    }
-    const listmessage = { name: name , message : message}
-    this.props.firebase.set(`listMessage/`, listmessage)
   }
 
   logout(){
@@ -65,14 +50,12 @@ class Login extends React.Component {
 
   render() {
     this.pushSample();
-    //this.pushMessage();
     return (
       <div>
         <button onClick={this.logout}>Sign out!</button>
         <Chat/>
      </div>)
 
-      // <div>{todosList}</div>
     
   }
 
@@ -80,15 +63,9 @@ class Login extends React.Component {
 
 export default compose(
   firebaseConnect([
-    'listUser' // { path: '/todos' } // object notation
+    'listUser' 
   ]),
   connect((state) => ({
     listUser: state.firebase.data.listUser,
-    //listMessage : state.firebase.data.listMessage,
-    // profile: state.firebase.profile // load profile
   }))
 )(Login)
-
-//export default withFirebase(AddData)
-// or firebaseConnect()(Todos)
-// export default Todos;

@@ -206,3 +206,6 @@ body {
   height: 0;
   cursor: pointer;
 }
+.star-cursor {
+  cursor: pointer;
+}
